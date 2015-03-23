@@ -1,0 +1,4 @@
+{
+    "name": "simple",
+    "main": "./simple/index.d.ts"
+}

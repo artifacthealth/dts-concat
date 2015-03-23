@@ -1,0 +1,1 @@
+export import File1 = require("./file1");

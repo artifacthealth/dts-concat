@@ -1,0 +1,2 @@
+Error: There was a problem validating import statements:
+index.d.ts: Import uses identifier 'File2' which is different than exported name 'File1' of imported file 'file1.d.ts'.

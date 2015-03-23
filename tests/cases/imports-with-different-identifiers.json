@@ -1,0 +1,4 @@
+{
+    "name": "imports-with-different-identifiers",
+    "main": "./imports-with-different-identifiers/index.d.ts"
+}

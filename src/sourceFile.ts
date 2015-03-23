@@ -1,10 +1,11 @@
-/// <reference path="./types.d.ts" />
+/// <reference path="../typings/node.d.ts" />
 
 import fs = require("fs");
 import path = require("path");
 
 import Import = require("./import");
 import ImportSet = require("./importSet");
+import ResultCallback = require("./resultCallback");
 
 class SourceFile {
 
@@ -21,7 +22,7 @@ class SourceFile {
     /**
      * List of imports.
      */
-    imports = new ImportSet();
+    imports: Import[] = [];
 
     /**
      * The text of the source file.
@@ -66,9 +67,15 @@ class SourceFile {
 
     static read(filename: string, callback: ResultCallback<SourceFile>): void {
 
-        fs.readFile(filename, "utf8", (err, result) => {
-            if(err) return callback(err);
-            callback(null, new SourceFile(filename, result));
+        fs.exists(filename, (exists) => {
+            if(!exists) {
+                return callback(new Error("File '" + filename + "' does not exist."));
+            }
+
+            fs.readFile(filename, "utf8", (err, result) => {
+                if(err) return callback(err);
+                callback(null, new SourceFile(filename, result));
+            });
         });
     }
 
@@ -114,13 +121,13 @@ class SourceFile {
 
     private _parseImport(line: string): boolean {
 
-        var statement: Import;
-        if(statement = Import.parse(line)) {
-            if(statement.relative) {
+        var importStatement: Import;
+        if(importStatement = Import.parse(line)) {
+            if(importStatement.relative) {
                 // get the absolute path of the import statement
-                statement.path = path.resolve(path.dirname(this.filename), statement.path + '.d.ts');
+                importStatement.path = path.resolve(path.dirname(this.filename), importStatement.path + '.d.ts');
             }
-            this.imports.add(statement);
+            this.imports.push(importStatement);
             return true;
         }
 

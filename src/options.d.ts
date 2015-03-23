@@ -1,3 +1,6 @@
+/**
+ * Describes a concat operation.
+ */
 interface Options {
 
     /**
@@ -14,6 +17,11 @@ interface Options {
      * The output directory.
      */
     outDir?: string;
+
+    /**
+     * Full path to the output file. If 'out' is specified then 'outDir' is ignored.
+     */
+    out?: string;
 
     /**
      * Character sequence to use for indent. Default is four spaces.

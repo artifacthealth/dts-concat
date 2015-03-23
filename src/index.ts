@@ -1,4 +1,5 @@
-/// <reference path="./types.d.ts" />
+/// <reference path="../typings/async.d.ts" />
+/// <reference path="../typings/node.d.ts" />
 
 import path = require("path");
 import async = require("async");
@@ -9,7 +10,13 @@ import SourceFile = require("./sourceFile");
 import SourceFileMap = require("./sourceFileMap");
 import Import = require("./import");
 import ImportSet = require("./importSet");
+import Callback = require("./callback");
 
+/**
+ * Combines TypeScript .d.ts files into a single .d.ts file for distributing CommonJS modules.
+ * @param options Options for the operation.
+ * @param callback Called when the operation completes.
+ */
 function concat(options: Options, callback: Callback): void {
 
     if(!options) {
@@ -26,7 +33,7 @@ function concat(options: Options, callback: Callback): void {
 
     var baseDir = path.resolve(path.dirname(options.main));
     var mainFileName = path.resolve(options.main);
-    var outFileName = path.resolve(options.outDir || baseDir, options.name + ".d.ts");
+    var outFileName = options.out ? path.resolve(options.out) : path.resolve(options.outDir || baseDir, options.name + ".d.ts");
     var indentText = options.indent || "    ";
 
     var sourceFiles = new SourceFileMap();
@@ -43,6 +50,11 @@ function concat(options: Options, callback: Callback): void {
         // flag all source file exported by the main source file
         mainSourceFile.imports.forEach(importStatement => {
             if(importStatement.exported) {
+                // Check to make sure we have a source file for this import
+                if(!sourceFiles.has(importStatement.path)) {
+                    return callback(new Error(path.relative(baseDir, mainSourceFile.filename) + ": Cannot find module '" + importStatement.path + "'." ));
+                }
+                // Mark source file as exported
                 sourceFiles.get(importStatement.path).exported = true;
             }
         });
@@ -127,7 +139,7 @@ function concat(options: Options, callback: Callback): void {
 
         output += "}\n";
 
-        fs.writeFileSync(outFileName, output, 'utf8');
+        fs.writeFile(outFileName, output, 'utf8', callback);
     });
 
     function readSourceFile(filename: string, callback: Callback): void {
@@ -137,6 +149,7 @@ function concat(options: Options, callback: Callback): void {
         }
 
         SourceFile.read(filename, (err, sourceFile) => {
+            if(err) return callback(err);
 
             if(sourceFile.containsAmbientExternalModule) {
                 return callback();
@@ -181,7 +194,7 @@ function concat(options: Options, callback: Callback): void {
                     var importedSourceFile = sourceFiles.get(importStatement.path);
                     if(importedSourceFile.exportName && importedSourceFile.exportName != importStatement.identifier) {
 
-                        errors.push(sourceFile.filename + ": Import uses identifier '" + importStatement.identifier + "' which is different than export name '" + importedSourceFile.exportName + "' of imported file '" + importStatement.path + "'.");
+                        errors.push(path.relative(baseDir, sourceFile.filename) + ": Import uses identifier '" + importStatement.identifier + "' which is different than exported name '" + importedSourceFile.exportName + "' of imported file '" + path.relative(baseDir, importStatement.path) + "'.");
                     }
                 }
 
@@ -193,7 +206,7 @@ function concat(options: Options, callback: Callback): void {
                 else {
                     if(identifier != importStatement.identifier) {
 
-                        errors.push(sourceFile.filename + ": Import of '" + importStatement.path + "' uses identifier '" + importStatement.identifier + "' which is different than previously used identifier '" + identifier + "'.");
+                        errors.push(path.relative(baseDir, sourceFile.filename) + ": Import of '" + path.relative(baseDir, importStatement.path) + "' uses identifier '" + importStatement.identifier + "' which is different than previously used identifier '" + identifier + "'.");
                     }
                 }
             });

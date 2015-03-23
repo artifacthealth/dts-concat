@@ -55,10 +55,12 @@ module.exports = function(grunt) {
                     target: "es5",
                     module: "commonjs",
                     sourceMap: true,
+                    declaration: true,
                     noImplicitAny: true
                 },
                 src: [
-                    'tests/**/*.ts'
+                    'tests/*.ts',
+                    'tests/cases/**/*.ts'
                 ],
                 dest: 'build/'
             }
@@ -85,6 +87,18 @@ module.exports = function(grunt) {
                         expand: true,
                         src: [
                             "typings/**/*.d.ts"
+                        ],
+                        dest: "build"
+                    }
+                ]
+            },
+            tests: {
+                files: [
+                    {
+                        expand: true,
+                        src: [
+                            "tests/cases/*.json",
+                            "tests/cases/**/*.d.ts"
                         ],
                         dest: "build"
                     }
@@ -146,6 +160,6 @@ module.exports = function(grunt) {
     grunt.registerTask("default", [ "build", "lib", "tests" ]);
     grunt.registerTask("build", [ "clean:build", "typescript:build", "copy:build" ]);
     grunt.registerTask("lib", [ "clean:lib", "copy:lib", "ts_clean:lib", "dts_concat" ]);
-    grunt.registerTask("tests", [ "typescript:tests", "mochaTest:tests" ]);
+    grunt.registerTask("tests", [ "typescript:tests", "copy:tests", "mochaTest:tests" ]);
 
 };
