@@ -6,10 +6,9 @@
     "name": "Artifact Health, LLC",
     "url": "http://www.artifacthealth.com"
   },
-  "private": true,
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/mgottlieb/dts-concat.git"
+    "url": "https://github.com/artifacthealth/dts-concat.git"
   },
   "licenses": [
     {
@@ -36,7 +35,8 @@
   "keywords": [
     "typescript",
     "dts",
-    "concat"
+    "concat",
+    "bundle"
   ],
   "dependencies": {
     "async": "^0.9.0"
