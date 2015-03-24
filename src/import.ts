@@ -31,7 +31,7 @@ class Import {
     }
 
     static parse(text: string): Import {
-        var match = text.match(/^[ \t]*(export )?import (\w+) = require\((['"])(.+?)(\3\);.*)$/);
+        var match = text.match(/^[ \t]*(export )?import (\w+) = require\((['"])(.+?)(\3\).*)$/);
         if(match) {
             return new Import(match[2], match[4], !!match[1]);
         }

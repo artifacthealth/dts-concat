@@ -2,4 +2,4 @@ class Test {
 
 }
 
-export = Test;
+export = Test

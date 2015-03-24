@@ -175,7 +175,7 @@ class SourceFile {
 
     private _parseExportAssignment(line: string): boolean {
 
-        var match = line.match(/^[ \t]*export = (\w+);.*$/);
+        var match = line.match(/^[ \t]*export = (\w+);?.*$/);
         if (match) {
             this.exportName = match[1];
             return true;
