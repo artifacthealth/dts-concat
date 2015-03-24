@@ -1,0 +1,1 @@
+export import SomeClass = require("./someClass");

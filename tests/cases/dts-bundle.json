@@ -1,5 +1,5 @@
 {
     "description": "Fixture used in dts-bundle test cases",
-    "name": "dts-bundle-example",
+    "name": "dts-bundle",
     "main": "./dts-bundle/main/index.d.ts"
 }

@@ -1,4 +1,6 @@
-declare module "dts-bundle-example" {
+/// <reference path="../typings/external.d.ts" />
+
+declare module "dts-bundle" {
     import mod1 = require("external1");
     import mod2 = require("external2");
 

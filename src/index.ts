@@ -88,7 +88,7 @@ function concat(options: Options, callback: Callback): void {
 
         sourceFiles.forEach(sourceFile => {
 
-            if(sourceFile.lines.length == 0) return;
+            if(sourceFile.lines.length == 0 || sourceFile.containsAmbientExternalModule) return;
 
             output += "\n";
             var depth = 1;
@@ -151,11 +151,11 @@ function concat(options: Options, callback: Callback): void {
         SourceFile.read(filename, (err, sourceFile) => {
             if(err) return callback(err);
 
+            sourceFiles.add(sourceFile);
+
             if(sourceFile.containsAmbientExternalModule) {
                 return callback();
             }
-
-            sourceFiles.add(sourceFile);
 
             // build a list of files that this file imports or references
             var filesToRead: string[] = [];
