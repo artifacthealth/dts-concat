@@ -1,8 +1,6 @@
 /**
  * A callback without a result.
  */
-interface Callback {
+export interface Callback {
     (err?: Error): void;
 }
-
-export = Callback;

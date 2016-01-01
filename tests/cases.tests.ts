@@ -2,11 +2,11 @@
 /// <reference path="../typings/mocha.d.ts"/>
 /// <reference path="../typings/chai.d.ts"/>
 
-import fs = require("fs");
-import path = require("path");
-import chai = require("chai");
-import concat = require("../src/index");
-import Options = require("../src/options");
+import * as fs from "fs";
+import * as path from "path";
+import * as chai from "chai";
+import {concat} from "../src/index";
+import {Options} from "../src/options";
 
 import expect = chai.expect;
 

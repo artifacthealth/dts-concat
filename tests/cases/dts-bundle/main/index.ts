@@ -1,4 +1,4 @@
-/// <reference path="./../typings/external.d.ts" />
+/// <reference path="../typings/external.d.ts" />
 
 import int = require('./lib/only-internal');
 import exp = require('./lib/exported-sub');

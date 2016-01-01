@@ -1,6 +1,6 @@
-import Import = require("./import");
+import {Import} from "./import";
 
-class ImportSet {
+export class ImportSet {
 
     private _map: { [path: string]: Import } = {};
     private _list: Import[] = [];
@@ -29,5 +29,3 @@ class ImportSet {
         this._list.forEach(callback);
     }
 }
-
-export = ImportSet;

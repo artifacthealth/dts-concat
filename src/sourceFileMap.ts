@@ -1,6 +1,6 @@
-import SourceFile = require("./sourceFile");
+import {SourceFile} from "./sourceFile";
 
-class SourceFileMap {
+export class SourceFileMap {
 
     private _map: { [path: string]: SourceFile } = {};
     private _list: SourceFile[] = [];
@@ -24,5 +24,3 @@ class SourceFileMap {
         this._list.forEach(callback);
     }
 }
-
-export = SourceFileMap;

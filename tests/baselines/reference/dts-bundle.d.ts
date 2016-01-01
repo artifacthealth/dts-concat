@@ -1,4 +1,4 @@
-/// <reference path="../typings/external.d.ts" />
+/// <reference path="../../../../../tests/cases/dts-bundle/typings/external.d.ts" />
 
 declare module "dts-bundle" {
     import mod1 = require("external1");

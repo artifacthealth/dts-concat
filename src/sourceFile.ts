@@ -1,13 +1,13 @@
 /// <reference path="../typings/node.d.ts" />
 
-import fs = require("fs");
-import path = require("path");
+import * as fs from "fs";
+import * as path from "path";
 
-import Import = require("./import");
-import ImportSet = require("./importSet");
-import ResultCallback = require("./resultCallback");
+import {Import} from "./import";
+import {ImportSet} from "./importSet";
+import {ResultCallback} from "./resultCallback";
 
-class SourceFile {
+export class SourceFile {
 
     /**
      * The name of the file.
@@ -183,5 +183,3 @@ class SourceFile {
         return false;
     }
 }
-
-export = SourceFile;

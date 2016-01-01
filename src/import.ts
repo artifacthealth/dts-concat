@@ -1,6 +1,6 @@
-import path = require("path");
+import * as path from "path";
 
-class Import {
+export class Import {
 
     /**
      * The import identifier.
@@ -37,5 +37,3 @@ class Import {
         }
     }
 }
-
-export = Import;

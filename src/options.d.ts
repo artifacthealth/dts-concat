@@ -1,7 +1,7 @@
 /**
  * Describes a concat operation.
  */
-interface Options {
+export interface Options {
 
     /**
      * The name of the module specified in package.json. Used to generate ambient external module declaration.
@@ -28,5 +28,3 @@ interface Options {
      */
     indent?: string;
 }
-
-export = Options;

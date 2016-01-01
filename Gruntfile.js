@@ -31,33 +31,18 @@ module.exports = function(grunt) {
         },
 
         typescript: {
+            options: {
+                target: "es5",
+                module: "commonjs",
+                sourceMap: true,
+                declaration: true,
+                noImplicitAny: true
+            },
             build: {
-                options: {
-                    references: [
-                        "core",
-                        "webworker"
-                    ],
-                    target: "es5",
-                    module: "commonjs",
-                    sourceMap: true,
-                    declaration: true,
-                    noImplicitAny: true
-                },
                 src: ['src/**/*.ts'],
-                dest: 'build/'
+                dest: 'build/src/'
             },
             tests: {
-                options: {
-                    references: [
-                        "core",
-                        "webworker"
-                    ],
-                    target: "es5",
-                    module: "commonjs",
-                    sourceMap: true,
-                    declaration: true,
-                    noImplicitAny: true
-                },
                 src: [
                     'tests/*.ts',
                     'tests/cases/**/*.ts'
@@ -153,7 +138,7 @@ module.exports = function(grunt) {
 
         var done = this.async();
         var bundler = require("./build/src/index");
-        bundler({ name: "dts-concat", main: "./build/src/index.d.ts", outDir: "lib/" }, done);
+        bundler.concat({ name: "dts-concat", main: "./build/src/index.d.ts", outDir: "lib/" }, done);
     });
 
     // Default task(s).

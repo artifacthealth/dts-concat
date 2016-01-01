@@ -1,23 +1,24 @@
 /// <reference path="../typings/async.d.ts" />
 /// <reference path="../typings/node.d.ts" />
+/// <reference path="../typings/lib.es6.d.ts" />
+import * as path from "path";
+import * as async from "async";
+import * as fs from "fs";
 
-import path = require("path");
-import async = require("async");
-import fs = require("fs");
+import {Options} from "./options";
+import {SourceFile} from "./sourceFile";
+import {SourceFileMap} from "./sourceFileMap";
+import {Import} from "./import";
+import {ImportSet} from "./importSet";
+import {Callback} from "./callback";
 
-import Options = require("./options");
-import SourceFile = require("./sourceFile");
-import SourceFileMap = require("./sourceFileMap");
-import Import = require("./import");
-import ImportSet = require("./importSet");
-import Callback = require("./callback");
 
 /**
  * Combines TypeScript .d.ts files into a single .d.ts file for distributing CommonJS modules.
  * @param options Options for the operation.
  * @param callback Called when the operation completes.
  */
-function concat(options: Options, callback: Callback): void {
+export function concat(options: Options, callback: Callback): void {
 
     if(!options) {
         throw new Error("Missing required argument 'options'.");
@@ -176,7 +177,7 @@ function concat(options: Options, callback: Callback): void {
                 }
             });
 
-            async.each(filesToRead, readSourceFile, callback);
+            async.eachSeries(filesToRead, readSourceFile, callback);
         });
     }
 
@@ -235,5 +236,3 @@ function escape(str: string): string {
     // From http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
-
-export = concat;
