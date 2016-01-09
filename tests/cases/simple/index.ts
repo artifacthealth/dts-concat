@@ -1,1 +1,1 @@
-export import File1 = require("./file1");
+export {File1} from "./file1";

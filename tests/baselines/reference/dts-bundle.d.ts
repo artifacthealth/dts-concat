@@ -1,8 +1,8 @@
 /// <reference path="../../../../../tests/cases/dts-bundle/typings/external.d.ts" />
 
 declare module "dts-bundle" {
-    import mod1 = require("external1");
-    import mod2 = require("external2");
+    import * as mod1 from "external1";
+    import * as mod2 from "external2";
 
     export function run(foo?: Foo): Foo;
     export function flep(): exp.ExternalContainer;

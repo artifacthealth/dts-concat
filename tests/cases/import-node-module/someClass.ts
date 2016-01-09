@@ -1,9 +1,7 @@
 /// <reference path="../../../typings/node.d.ts" />
 
-import events = require("events");
+import * as events from "events";
 
-class SomeClass extends events.EventEmitter {
+export class SomeClass extends events.EventEmitter {
 
 }
-
-export = SomeClass;

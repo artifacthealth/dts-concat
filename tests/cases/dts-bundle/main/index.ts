@@ -1,10 +1,12 @@
 /// <reference path="../typings/external.d.ts" />
 
-import int = require('./lib/only-internal');
-import exp = require('./lib/exported-sub');
-import mod1 = require('external1');
+import * as int from './lib/only-internal';
+import * as exp from './lib/exported-sub';
+import * as mod1 from 'external1';
 
-export import Foo = require('./Foo');
+import {Foo} from './Foo';
+export {Foo};
+
 /*
  Licence foo module v1.2.3 - MIT
  */
@@ -23,3 +25,4 @@ export function flep(): exp.ExternalContainer {
 export function bar(): mod1.SomeType {
     return new mod1.SomeType();
 }
+

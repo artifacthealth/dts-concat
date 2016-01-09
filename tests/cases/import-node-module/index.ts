@@ -1,1 +1,1 @@
-export import SomeClass = require("./someClass");
+export {SomeClass} from "./someClass";

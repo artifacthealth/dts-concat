@@ -36,7 +36,10 @@ module.exports = function(grunt) {
                 module: "commonjs",
                 sourceMap: true,
                 declaration: true,
-                noImplicitAny: true
+                noImplicitAny: true,
+                references: [
+                    "./typings/lib.es6.d.ts"
+                ]
             },
             build: {
                 src: ['src/**/*.ts'],

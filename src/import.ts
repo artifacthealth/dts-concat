@@ -22,18 +22,42 @@ export class Import {
      */
     exported: boolean;
 
+    /**
+     *
+     */
+    module: boolean;
+
     constructor(identifier: string, path: string, exported: boolean) {
 
-        this.identifier = identifier;
         this.path = path;
         this.exported = exported;
         this.relative = /^([\./].*|.:.*)$/.test(path);
+
+        var match = identifier.match(/^\* as ([^ ]+)$/);
+        if(match) {
+            // This is a "* as ..." import of a module
+            this.identifier = match[1];
+            this.module = true;
+        }
+        else {
+            // multiple imports are not supported
+            match = identifier.match(/^\{\s*(.*)\s*\}$/);
+            if(match) {
+                this.identifier = match[1];
+            }
+        }
     }
 
     static parse(text: string): Import {
-        var match = text.match(/^[ \t]*(export )?import (\w+) = require\((['"])(.+?)(\3\).*)$/);
+        var match = text.match(/^[ \t]*(export|import) ((?:\*(?: as (?:[^ ]+))?)|(?:\{.+\})) from ['"]([^ ,]+)['"];?\s*$/);
         if(match) {
-            return new Import(match[2], match[4], !!match[1]);
+            return new Import(this._trim(match[2]), match[3], match[1] == "export");
         }
     }
+
+    private static _trim(text: string): string {
+        if(!text) return text;
+        return text.trim();
+    }
 }
+

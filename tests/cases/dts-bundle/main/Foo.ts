@@ -1,4 +1,4 @@
-class Foo {
+export class Foo {
 
     foo: string;
     private counter: number = 0;
@@ -20,5 +20,3 @@ class Foo {
 
     }
 }
-
-export = Foo;

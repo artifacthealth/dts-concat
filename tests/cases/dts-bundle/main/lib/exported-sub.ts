@@ -1,7 +1,7 @@
 /// <reference path="../../typings/external.d.ts" />
 
-import Foo = require('../Foo');
-import mod2 = require('external2');
+import {Foo} from '../Foo';
+import * as mod2 from 'external2';
 
 export class ExternalContainer {
     public something: mod2.AnotherType;

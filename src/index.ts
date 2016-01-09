@@ -1,6 +1,5 @@
 /// <reference path="../typings/async.d.ts" />
 /// <reference path="../typings/node.d.ts" />
-/// <reference path="../typings/lib.es6.d.ts" />
 import * as path from "path";
 import * as async from "async";
 import * as fs from "fs";
@@ -58,13 +57,15 @@ export function concat(options: Options, callback: Callback): void {
                 // Mark source file as exported
                 sourceFiles.get(importStatement.path).exported = true;
             }
+            if(importStatement.module && importStatement.relative) {
+                // Check to make sure we have a source file for this import
+                if(!sourceFiles.has(importStatement.path)) {
+                    return callback(new Error(path.relative(baseDir, mainSourceFile.filename) + ": Cannot find module '" + importStatement.path + "'." ));
+                }
+                // Mark source file as being a module
+                sourceFiles.get(importStatement.path).module = true;
+            }
         });
-
-        // make sure imports follow rules
-        var errors = validateImports();
-        if(errors.length > 0) {
-            return callback(new Error("There was a problem validating import statements:\n" + errors.join("\n")));
-        }
 
         // add references to source files that contain ambient declarations for an imported modules
         references.forEach((reference: string) => {
@@ -83,7 +84,12 @@ export function concat(options: Options, callback: Callback): void {
         // add imported modules
         imports.forEach((importStatement) => {
            if(!importStatement.relative) {
-               output += indent(1) + "import " + importStatement.identifier + " = require(\"" + importStatement.path + "\");\n";
+               if(importStatement.module) {
+                   output += indent(1) + "import * as " + importStatement.identifier + " from \"" + importStatement.path + "\";\n";
+               }
+               else {
+                   output += indent(1) + "import { " + importStatement.identifier + " } from \"" + importStatement.path + "\";\n";
+               }
            }
         });
 
@@ -94,15 +100,8 @@ export function concat(options: Options, callback: Callback): void {
             output += "\n";
             var depth = 1;
 
-            // Check if module uses export assignment
-            if(sourceFile.exportName) {
-                if(sourceFile.exported) {
-                    // The module is exported by the main module. Create a regular expression that matches on where the
-                    // identifier is declared in the module so that we can add the 'export' modifier.
-                    var matchDeclaration = createExportNameMatchRegExp(sourceFile.exportName);
-                }
-            }
-            else {
+            // Check if import * as... syntax is used
+            if(sourceFile.module) {
                 // We have a module that does not use export assignment. Find where the module is imported and use the
                 // import identifier to wrap the module in a module declaration.
                 var importStatement = imports.get(sourceFile.filename);
@@ -118,11 +117,6 @@ export function concat(options: Options, callback: Callback): void {
             }
 
             sourceFile.lines.forEach(line => {
-                if(matchDeclaration && matchDeclaration.test(line)) {
-                    line = "export " + line;
-                    matchDeclaration = undefined;
-                }
-
                 output += indent(depth) + line + "\n";
             });
 
@@ -131,12 +125,6 @@ export function concat(options: Options, callback: Callback): void {
                 output += indent(1) + "}\n";
             }
         });
-
-        // if the main file uses an export assignment, add it back in
-        var exportName = mainSourceFile.exportName;
-        if(exportName) {
-            output += "\n" + indent(1) + "export = " + exportName + ";\n";
-        }
 
         output += "}\n";
 
@@ -179,41 +167,6 @@ export function concat(options: Options, callback: Callback): void {
 
             async.eachSeries(filesToRead, readSourceFile, callback);
         });
-    }
-
-    function validateImports(): string[] {
-
-        var imports: { [path: string]: string } = {};
-        var errors: string[] = [];
-
-        sourceFiles.forEach(sourceFile => {
-
-            sourceFile.imports.forEach(importStatement => {
-
-                // check to make sure that imports of modules that use export assignment use the same identifier name as the exported symbol.
-                if(importStatement.relative) {
-                    var importedSourceFile = sourceFiles.get(importStatement.path);
-                    if(importedSourceFile.exportName && importedSourceFile.exportName != importStatement.identifier) {
-
-                        errors.push(path.relative(baseDir, sourceFile.filename) + ": Import uses identifier '" + importStatement.identifier + "' which is different than exported name '" + importedSourceFile.exportName + "' of imported file '" + path.relative(baseDir, importStatement.path) + "'.");
-                    }
-                }
-
-                // check to make sure that all imports of the same module use the same identifier
-                var identifier = imports[importStatement.identifier];
-                if(identifier === undefined) {
-                    imports[importStatement.path] = importStatement.identifier;
-                }
-                else {
-                    if(identifier != importStatement.identifier) {
-
-                        errors.push(path.relative(baseDir, sourceFile.filename) + ": Import of '" + path.relative(baseDir, importStatement.path) + "' uses identifier '" + importStatement.identifier + "' which is different than previously used identifier '" + identifier + "'.");
-                    }
-                }
-            });
-        });
-
-        return errors;
     }
 
     function containsAmbientDeclarationForImportedModule(filename: string): boolean {

@@ -1,5 +1,3 @@
-class File1 {
+export class File1 {
 
 }
-
-export = File1;

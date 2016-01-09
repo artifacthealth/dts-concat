@@ -30,14 +30,14 @@ export class SourceFile {
     lines: string[] = [];
 
     /**
-     * The name of the exported identifier.
-     */
-    exportName: string;
-
-    /**
      * Indicates if this source file is exported by the main source file.
      */
     exported: boolean;
+
+    /**
+     * Indicates if source file is used as a module in the * as ... syntax
+     */
+    module: boolean;
 
     /**
      * Indicates if the source file contains an ambient external module declaration.
@@ -112,11 +112,15 @@ export class SourceFile {
             return;
         }
 
-        if(this._parseExportAssignment(line)) {
+        if(this._standaloneExport(line)) {
             return;
         }
 
         this.lines.push(this._stripModifiers(line));
+    }
+
+    private _standaloneExport(line: string): boolean {
+        return !!line.match(/^[ \t]*export \{.*\};$/);
     }
 
     private _parseImport(line: string): boolean {
@@ -168,16 +172,6 @@ export class SourceFile {
         var match = line.match(/^([ \t]*declare module )(['"])(.+?)(\2[ \t]*{?.*)$/);
         if(match) {
             this._ambientExternalModules.push(match[3]);
-            return true;
-        }
-        return false;
-    }
-
-    private _parseExportAssignment(line: string): boolean {
-
-        var match = line.match(/^[ \t]*export = (\w+);?.*$/);
-        if (match) {
-            this.exportName = match[1];
             return true;
         }
         return false;
